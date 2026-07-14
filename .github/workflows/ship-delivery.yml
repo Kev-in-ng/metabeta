@@ -48,17 +48,18 @@ jobs:
     name: Security scan
     needs: test
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
       - name: Scan source and configuration
-        uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8 # v0.33.1
-        with:
-          scan-type: fs
-          scan-ref: .
-          severity: CRITICAL,HIGH
-          ignore-unfixed: true
-          exit-code: "1"
+        run: >-
+          docker run --rm
+          --mount "type=bind,source=${{ github.workspace }},target=/workspace,readonly"
+          aquasec/trivy@sha256:cffe3f5161a47a6823fbd23d985795b3ed72a4c806da4c4df16266c02accdd6f
+          fs --scanners vuln,misconfig,secret --severity CRITICAL,HIGH
+          --ignore-unfixed --exit-code 1 --no-progress --skip-version-check
+          --timeout 8m --skip-dirs /workspace/.git --skip-dirs /workspace/.venv
+          /workspace
 
   build:
     name: Build and publish
