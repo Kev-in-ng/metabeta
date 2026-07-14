@@ -87,9 +87,16 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
       - name: Write release evidence
+        shell: bash
         run: |
-          printf '{"execution_id":"%s","commit":"%s","image":"%s","digest":"%s"}
-'             "${{ inputs.ship_execution_id }}" "${{ github.sha }}"             "${{ inputs.ecr_repository }}" "${{ steps.build.outputs.digest }}"             > ship-release.json
+          cat > ship-release.json <<'SHIP_RELEASE_EOF'
+          {
+            "execution_id": "${{ inputs.ship_execution_id }}",
+            "commit": "${{ github.sha }}",
+            "image": "${{ inputs.ecr_repository }}",
+            "digest": "${{ steps.build.outputs.digest }}"
+          }
+          SHIP_RELEASE_EOF
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: ship-release-${{ inputs.ship_execution_id }}
