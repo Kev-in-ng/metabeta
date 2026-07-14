@@ -1,0 +1,21 @@
+{
+  "apiVersion": "ship.platform/v1alpha1",
+  "kind": "ServiceDelivery",
+  "metadata": {
+    "name": "metabeta"
+  },
+  "spec": {
+    "branch": "main",
+    "dockerfile": "Dockerfile",
+    "runtime": "python",
+    "containerPort": 7860,
+    "environments": [
+      "staging",
+      "production"
+    ],
+    "verification": {
+      "prometheus": true,
+      "keployRequired": false
+    }
+  }
+}
