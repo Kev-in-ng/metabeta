@@ -74,7 +74,8 @@ class TrainingEnv:
             bonus = (curr_score - self.score) * 0.5
             penalty += bonus
             self.score = curr_score
-        if curr_score >= 1.0 and not done:
+        task_complete = bool(task_info.get("completed")) and not task_info.get("pending")
+        if task_complete and not done:
             penalty += 0.5
             done = True
             self.finished = True
